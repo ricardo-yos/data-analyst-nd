@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+    
+    <style>
+      h2 {
+        text-align: center;
+      }
+    </style>
+    
+    <script type="text/javascript">
+      function draw(data) {
+      
+      /*
+        D3.js setup code
+      */
+
+          "use strict";
+          var margin = 75,
+              width = 1400 - margin,
+              height = 600 - margin;
+          
+          var radius = 4;
+          
+          d3.select("body")
+            .append("h2")
+            .text("Survivors in each Class")
+
+          var svg = d3.select("body")
+            .append("svg")
+              .attr("width", width + margin)
+              .attr("height", height + margin)
+            .append('g')
+                .attr('class','chart');
+
+      /*
+        Dimple.js Chart construction code
+      */
+    
+          var myChart = new dimple.chart(svg, data);
+          var x = myChart.addCategoryAxis("x", ["Pclass", "Survived"]);
+          var y = myChart.addMeasureAxis("y", "Name");
+          x.title = "Passenger Class";
+          y.title = "Number of Passengers";
+          var s = myChart.addSeries("Survived", dimple.plot.bar);
+          myChart.draw();
+          
+          var legend = svg.append("g")
+              .attr("class", "legend")
+              .attr("transform", "translate(" + (width - 200) + "," + 15 + ")")
+              .selectAll("g")
+              .data(["Survived", "Not Survived"])
+              .enter().append("g");
+
+          legend.append("circle")
+              .attr("cy", function(d, i) {
+                  return i * 30;
+              })
+              .attr("r", function(d) {
+                  return radius
+              })
+              .attr("fill", function(d) {
+                  if (d == "Survived") {
+                      return 'blue';
+                  } else {
+                      return 'red';
+                  }
+              });
+          
+          legend.append("text")
+              .attr("y", function(d, i) {
+                  return i * 30 + 5;
+              })
+              .attr("x", radius * 5)
+              .text(function(d) {
+                  return d;
+              });
+
+        };
+      </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+  d3.csv("data/titanic_data.csv", draw);
+  </script>
+</body>
+</html>
