@@ -4,7 +4,6 @@
 + Ricardo Yoshitomi
 
 ## Data Visualization: Survivors on the Titanic
-***
 
 ### Summary
 
