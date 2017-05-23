@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+    
+    <style>
+      h2 {
+        text-align: center;
+      }
+    </style>
+    
+    <script type="text/javascript">
+      function draw(data) {
+      
+      /*
+        D3.js setup code
+      */
+
+          "use strict";
+          var margin = 75,
+              width = 1400 - margin,
+              height = 600 - margin;
+          
+          var radius = 4;
+          
+          d3.select("body")
+            .append("h2")
+            .text("Who survived the Titanic ?")
+
+          var svg = d3.select("body")
+            .append("svg")
+              .attr("width", width + margin)
+              .attr("height", height + margin)
+            .append('g')
+                .attr('class','chart');
+          
+      /*
+        D3.js format data fields
+      */
+          // Change Survived column values
+          data.forEach(function(d) {
+              if (d.Survived === "1") {
+                  d.Survived = "Yes";
+              } else {
+                  d.Survived = "No";
+              }
+          });
+          // Change Pclass column values
+          data.forEach(function(d) {
+              if (d.Pclass === "1") {
+                  d.Pclass = "1st";
+              } else if (d.Pclass === "2") {
+                  d.Pclass = "2nd";
+              } else {
+                  d.Pclass = "3rd";
+              }
+          });
+          // Change the column names
+          data.forEach(function(d) {
+              d["Passenger Class"] = d["Pclass"];
+              delete d["Pclass"];
+              d["Percentage"] = d["Name"];
+              delete d["Name"];
+          });
+              
+      /*
+        Dimple.js Chart construction code
+      */
+    
+          var myChart = new dimple.chart(svg, data);
+          //  Set the size of the plot
+          myChart.setBounds(75, 42, 880, 460)
+          // Create category fields for the x axis
+          var x = myChart.addCategoryAxis("x", "Passenger Class");
+          // Set the percentage property to the y axis
+          var y = myChart.addPctAxis("y", "Percentage");
+          // Format the axis text size
+          x.fontSize = "15px";
+          y.fontSize = "15px";
+          // Order the category fields of the series
+          x.addOrderRule(["1st", "2nd", "3rd"]);
+          var s = myChart.addSeries("Survived", dimple.plot.bar);
+          // Count data values for the series
+          s.aggregate = dimple.aggregateMethod.count;
+          // Add a legend to the chart
+          myChart.addLegend(600, 50, 510, 20, "right");
+          myChart.draw();
+
+          // Add a title to the legend
+          svg.selectAll("title_text")
+          .data(["Survival Status"])
+          .enter()
+          .append("text")
+            .attr("x", 1000)
+            .attr("y", 42)
+            .style("font-family", "sans-serif")
+            .style("font-size", "15px")
+            .text(function (d) { return d; });
+          
+          // Add the source of dataset
+          svg.selectAll("title_text")
+          .data(["Source: https://www.kaggle.com/c/titanic"])
+          .enter()
+          .append("text")
+            .attr("x", 1000)
+            .attr("y", 510)
+            .style("font-family", "sans-serif")
+            .style("font-size", "10px")
+            .text(function (d) { return d; });
+          
+          // Add a rectangle box for the text
+          svg.append("rect")
+            .attr("x", 995)
+            .attr("y", 100)
+            .attr("width", 300)
+            .attr("height", 210)
+            .attr("fill", "white");
+          
+          var g = svg.append('g')
+            .attr("transform", "translate(" + 995 + "," + 100 + ")");
+          
+          // Append the text to the rectangle
+          g.append("foreignObject")
+            .attr("width", 300)
+            .attr("height", 200)
+            .style("font-family", "sans-serif")
+            .style("font-size", "14px")
+            .append("xhtml:body")
+            .html("On April 15, 1912, the RMS Titanic sank in the North Atlantic Ocean after colliding with an iceberg during her maiden voyage. Of the estimated 2,224 passengers and crew aboard, more than 1,500 died, making it one of the most infamous shipwrecks in history. Due to the limited number of lifeboats for the passengers and crew, some groups of people were more likely to survive than others. One of the criteria adopted to select passengers to be rescued by the lifeboats was the passenger class.");
+          
+        };
+      </script>
+  </head>
+<body>
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+  d3.csv("data/titanic_data.csv", draw);
+  </script>
+</body>
+</html>
