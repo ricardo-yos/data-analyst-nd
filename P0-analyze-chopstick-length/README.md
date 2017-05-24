@@ -1,1 +1,1 @@
-## P0: Analyze Chopstick Length
+## Analyze Chopstick Length
