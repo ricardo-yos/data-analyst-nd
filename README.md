@@ -1,2 +1,2 @@
 # Data Analyst Nanodegree
-Udacity Data Analyst Nanodegree project files
+All my projects of the Udacity Data Analyst Nanodegree
